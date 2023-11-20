@@ -1,0 +1,347 @@
+Assignment Content
+
+Lab Instruction:
+Answer each question in the provided space.
+You must include the solution (SQL Statement) and the output of the query for each question.
+quote you code and output in a code snippet
+See the following example:
+
+SELECT order_id, customer_id
+ FROM orders
+WHERE order_id < 5
+ORDER BY order_id;
+ 
+  ORDER_ID CUSTOMER_ID
+---------- -----------
+         1           4
+         2           4
+         3           5
+         4           8
+To generate the result like the above output, select the SQL statement, use the "Run Script" button to execute the query, and copy the result from the output box to the answer box in your lab. If one column is too long, use the following command to format the output.
+
+COLUMN city FORMAT A20;
+'city' is your column name, A20 means you want your column to be 20 char long. You should set it accordingly. Make sure your code does not generate errors before submitting a solution.
+
+
+
+Style Guide:
+
+Your SQL should be written using the standard coding style:
+all keywords are to be upper case,
+all user-defined names are to be lower case, (example: table and field names)
+there should be a carriage return before each major part of the SQL statements (i.e. before SELECT, FROM, WHERE and ORDER BY)
+
+Question 1
+1
+/
+1.5
+Final Grade: 1 point out of 1.5 points possible
+Write a query to display the tomorrow’s date in the following format:
+
+    The 13th day in September of year 2023
+
+If 'today' is 2023-09-12, it returns the result above. But your result should depend on the day when others RUN/EXECUTE your query. 
+
+Label the column Tomorrow (case-sensitive), return in the following format.
+
+Tomorrow                               
+---------------------------------------
+ The 13th day in September of Year 2023
+Your Answer
+SELECT
+ 
+ 'The ' || TO_CHAR(SYSDATE + 1, 'DD') || 'th day in ' || TO_CHAR(SYSDATE + 1, 'Month') || ' of Year ' || TO_CHAR(SYSDATE + 1, 'YYYY') AS Tomorrow
+ 
+FROM dual;
+ 
+ 
+ 
+ 
+output:
+ 
+ 
+ 
+TOMORROW               
+ 
+--------------------------------------
+ 
+The 14th day in September of Year 2023
+SELECT to_char(sysdate + 1,'FM "The" ddth "day in" Month "of Year" YYYY') as "Tomorrow"
+from dual;
+
+Question 2
+1.5
+/
+1.5
+Final Grade: 1.5 points out of 1.5 points possible
+For each product in category 4 that its list_price is between $300 and $310 (both included), show product ID, product name, list price, and the new list price increased by 3%. Display the new list price as a whole number (integer).
+
+In your result, add a calculated column to show the difference of old and new list prices. Name this column as Price Difference.
+
+Sort the result according to product ID.
+
+The query returns 3 rows with following columns.
+
+PRODUCT_ID PRODUCT_NAME                   LIST_PRICE  NEW_PRICE Price Difference
+---------- ------------------------------ ---------- ---------- ----------------
+Your Answer
+COLUMN product_id FORMAT A10;
+ 
+COLUMN product_name FORMAT A25;
+ 
+COLUMN price_difference FORMAT A20;
+ 
+SELECT product_id,product_name,list_price,
+ 
+ROUND(list_price * 1.03) AS new_price,
+ 
+ROUND((list_price * 1.03) - list_price) AS price_difference
+ 
+FROM products
+ 
+WHERE category_id = 4
+ 
+AND list_price BETWEEN 300 AND 310
+ 
+ORDER BY
+ 
+product_id;
+output:
+PRODUCT_ID PRODUCT_NAME              LIST_PRICE  NEW_PRICE     PRICE_DIFFERENCE
+---------- ------------------------- ---------- ---------- --------------------
+        39 ASRock EP2C602-4L/D16         301.99        311                    9
+       226 Asus PRIME X299-A             309.85        319                    9
+       227 Gigabyte GA-X99-UD5 WIFI         305        314                    9
+ 
+ 
+select product_id, product_name, list_price, trunc(list_price * 1.03) new_price,
+    trunc(list_price * 1.03) - list_price as "Price Difference" 
+from products
+where category_id = 4 and list_price <= 310 and list_price >= 300
+order by product_id;
+ 
+PRODUCT_ID PRODUCT_NAME                   LIST_PRICE  NEW_PRICE Price Difference
+---------- ------------------------------ ---------- ---------- ----------------
+        39 ASRock EP2C602-4L/D16              301.99        311             9.01
+       226 Asus PRIME X299-A                  309.85        319             9.15
+       227 Gigabyte GA-X99-UD5 WIFI              305        314                9
+
+Question 3
+1
+/
+1.5
+Final Grade: 1 point out of 1.5 points possible
+Write a query to find the manages for employees whose last name start with 'B' and end with 't'. Display the name and job title for the managers in the following format:
+
+Info                                                                                          
+------------------------------------------
+Rory Kelly works as Purchasing Manager.
+Rory Kelly who works as Purchasing Manger is a manager for an employee whose name starts with 'B' and ends with 't'.
+
+This query returns 2 row.
+
+Your Answer
+SELECT 'Info' AS Info
+FROM employees e1, employees e2
+WHERE e1.employee_id = e2.manager_id
+  AND SUBSTR(e2.last_name, 1, 1) = 'B'
+  AND SUBSTR(e2.last_name, -1) = 't'
+UNION ALL
+SELECT e2.first_name || ' ' || e2.last_name || ' works as ' || e2.job_title || '.' AS Info
+FROM employees e1, employees e2
+WHERE e1.employee_id = e2.manager_id
+  AND SUBSTR(e2.last_name, 1, 1) = 'B'
+  AND SUBSTR(e2.last_name, -1) = 't';
+ 
+output:
+ 
+Ollie Bennett works as Purchasing Clerk.                                                                                                                                                                                                                                                                                                                                                                               
+Felix Bryant works as Stock Clerk.                                                                                        
+select b.first_name || ' ' || b.last_name || ' works as ' || b.job_title || '.' as "Info"
+ from employees a, employees b 
+where a.last_name LIKE 'B%t'
+  and a.manager_id=b.employee_id;
+
+
+Info                                                                                          ------------------------------------------
+Rory Kelly works as Purchasing Manager.
+Jackson Coleman works as Stock Manager.
+
+Question 4
+1
+/
+1.5
+Final Grade: 1 point out of 1.5 points possible
+For employees hired in December 2016, display the employee’s last name, hire date and calculate the integer number of months between the current date and the date the employee was hired, considering that if an employee worked over half of a month, it should be counted as one month.
+
+The query returns 7 rows with the following columns.
+
+LAST_NAME       HIRE_DATE       Months Worked
+--------------- --------------- -------------
+Sort the result first based on the hire date column and then based on the employee's last name. 
+
+Your Answer
+SELECT
+ 
+  last_name,
+ 
+  hire_date,
+ 
+  CEIL(MONTHS_BETWEEN(SYSDATE, hire_date)) AS months_worked
+ 
+FROM
+ 
+  employees
+ 
+WHERE
+ 
+  TO_CHAR(hire_date, 'YYYY-MM') = '2016-12'
+ 
+ORDER BY
+ 
+  hire_date, last_name;
+ 
+output:
+LAST_NAME            HIRE_DATE  MONTHS_WORKED
+-------------------- --------- --------------
+Brooks               07-DEC-16             82
+Kelly                07-DEC-16             82
+Ellis                09-DEC-16             82
+Bryant               12-DEC-16             82
+Ortiz                15-DEC-16             81
+Palmer               19-DEC-16             81
+Price                24-DEC-16             81
+select last_name, hire_date, round(MONTHS_BETWEEN(SYSDATE, hire_date)) as "Months Worked"
+from employees
+where hire_date <= to_date('31-12-16','DD-MM-YY')
+and hire_date >= to_date('01-12-16','DD-MM-YY')
+order by hire_date, last_name;
+ 
+LAST_NAME       HIRE_DATE       Months Worked
+--------------- --------------- -------------
+Brooks          16-12-07                   81
+Kelly           16-12-07                   81
+Ellis           16-12-09                   81
+Bryant          16-12-12                   81
+Ortiz           16-12-15                   81
+Palmer          16-12-19                   81
+Price           16-12-24                   80
+
+
+-- values for the column Months Worked would be different base on the time executing this query.
+
+
+Question 5
+1.5
+/
+2
+Final Grade: 1.5 points out of 2 points possible
+Display each employee’s last name, hire date, and the review date, which is the first Monday after 6 months of service. Show the result only for those hired after December 10, 2016. 
+
+Format the review dates in the following format:
+
+TUESDAY, January the Thirty-First of year 2016
+You can use ddspth to have the above format for the day. Sort first by review date and then by last name.
+
+The query returns 4 rows with the following columns.
+
+LAST_NAME       HIRE_DATE       REVIEW_DATE                                      
+--------------- --------------- -------------------------------------------------
+Your Answer
+COLUMN LAST_NAME FORMAT A20;
+SELECT
+  LAST_NAME,
+  TO_CHAR(HIRE_DATE, 'DAY, "MONTH" "the "DDSPth "of year" YYYY') AS HIRE_DATE,
+  TO_CHAR(NEXT_DAY(ADD_MONTHS(HIRE_DATE, 6), 'MONDAY'), 'DAY, "MONTH" "the "DDSPth "of year" YYYY') AS REVIEW_DATE
+FROM
+  employees
+WHERE
+HIRE_DATE > TO_DATE('2016-12-10', 'YYYY-MM-DD')
+ORDER BY
+  REVIEW_DATE,
+  LAST_NAME;
+ 
+OUTPUT:
+ 
+LAST_NAME            HIRE_DATE                                        REVIEW_DATE                                    
+-------------------- ------------------------------------------------ ------------------------------------------------
+Bryant               MONDAY   , MONTH the TWELFTH of year 2016        MONDAY   , MONTH the NINETEENTH of year 2017    
+Ortiz                THURSDAY , MONTH the FIFTEENTH of year 2016      MONDAY   , MONTH the NINETEENTH of year 2017    
+Palmer               MONDAY   , MONTH the NINETEENTH of year 2016     MONDAY   , MONTH the TWENTY-SIXTH of year 2017  
+Price                SATURDAY , MONTH the TWENTY-FOURTH of year 2016  MONDAY   , MONTH the TWENTY-SIXTH of year 2017  
+ 
+
+
+select last_name, hire_date, 
+to_char(next_day(add_months(hire_date,6), 'Monday'), 'FM DAY, Month "the" ddspth "of year" YYYY') as review_date
+from employees
+where hire_date < to_date('10-12-2016','DD-MM-YY')
+order by next_day(add_months(hire_date,6), 'Monday'), last_name;
+ 
+LAST_NAME       HIRE_DATE       REVIEW_DATE                                      
+--------------- --------------- -------------------------------------------------
+Bryant          16-12-12         MONDAY, June nineteenth of year 2017            
+Ortiz           16-12-15         MONDAY, June nineteenth of year 2017            
+Palmer          16-12-19         MONDAY, June twenty-sixth of year 2017          
+Price           16-12-24         MONDAY, June twenty-sixth of year 2017  
+ 
+
+Question 6
+0
+/
+2
+Final Grade: 0 points out of 2 points possible
+For all warehouses, display warehouse id, warehouse name, city, and state. For warehouses with the null value for the state column, display “unknown”. Sort the result based on the warehouse ID.
+
+The query returns 9 rows with the following columns.
+
+WAREHOUSE_ID WAREHOUSE_NAME       CITY                 STATE                         
+------------ -------------------- -------------------- ------------------------------
+Your Answer
+COLUMN WAREHOUSE_ID FORMAT A12;
+COLUMN WAREHOUSE_NAME FORMAT A20;
+SELECT
+    WAREHOUSE_ID,
+    WAREHOUSE_NAME,
+    LOCATION_ID
+FROM
+    warehouses
+ORDER BY
+    WAREHOUSE_ID;
+ 
+ 
+OUTPUT:
+ 
+WAREHOUSE_ID WAREHOUSE_NAME         LOCATION_ID
+------------ -------------------- -------------
+           1 Southlake, Texas                 5
+           2 San Francisco                    6
+           3 New Jersey                       7
+           4 Seattle, Washington              8
+           5 Toronto                          9
+           6 Sydney                          13
+           7 Mexico City                     23
+           8 Beijing                         11
+           9 Bombay                          12
+ 
+*IN WAREHOUSE TABLE THERE WASN'T ANY "STATE" OR "CITY" SO I DIDN'T ADD THE SQL COMMANDS!*
+select warehouse_id, w.warehouse_name, l.city, nvl(l.state,'unknown') as state
+from warehouses w 
+inner join locations l
+        on w.location_id = l.location_id
+order by warehouse_id;
+ 
+WAREHOUSE_ID WAREHOUSE_NAME       CITY                 STATE                         
+------------ -------------------- -------------------- ------------------------------
+           1 Southlake, Texas     Southlake            Texas                         
+           2 San Francisco        South San Francisco  California                    
+           3 New Jersey           South Brunswick      New Jersey                    
+           4 Seattle, Washington  Seattle              Washington                    
+           5 Toronto              Toronto              Ontario                       
+           6 Sydney               Sydney               New South Wales               
+           7 Mexico City          Mexico City          Distrito Federal,             
+           8 Beijing              Beijing              unknown                       
+           9 Bombay               Bombay               Maharashtra                   
+ 
+ 
+9 rows selected.

@@ -1,0 +1,284 @@
+Question 1
+1.5
+/
+1.5
+Final Grade: 1.5 points out of 1.5 points possible
+In this question you create a new database named seneca and a collection student. We store student data in this collection. 
+
+> use seneca
+This command makes “seneca” your current database. However, the database will not be created until you insert a document into this database.
+
+db.collection_name.insertOne({}) 
+Write a command to insert a new document into your collection student with the following data:
+
+first_name: Nick
+last_name: Adam
+email: n_adam@email.com
+city: King
+status: part-time
+gpa: 3.6
+program: BTD
+Your Answer
+db.student.insertOne({
+  first_name: "Nick",
+  last_name: "Adam",
+  email: "n_adam@email.com",
+  city: "King",
+  status: "part-time",
+  gpa: 3.6,
+  program: "BTD"
+})
+ 
+output:
+test> use seneca
+switched to db seneca
+seneca> db.collection_name.insertOne({})
+{
+  acknowledged: true,
+  insertedId: ObjectId("654bae712405fbd581466f4b")
+}
+seneca> db.student.insertOne({
+...   first_name: "Nick",
+...   last_name: "Adam",
+...   email: "n_adam@email.com",
+...   city: "King",
+...   status: "part-time",
+...   gpa: 3.6,
+...   program: "BTD"
+... })
+{
+  acknowledged: true,
+  insertedId: ObjectId("654baf1e2405fbd581466f4c")
+}
+db.student.insertOne(
+{first_name: "Nick",
+last_name: "Adam",
+email: "n_adam@email.com",
+city: "King",
+status: "part-time",
+gpa: "3.6", 
+program: "BTD"})
+
+Question 2
+0
+/
+1.5
+Final Grade: 0 points out of 1.5 points possible
+Write a command to check if the document has been created successfully.
+
+You use the find() method to search and fetch documents.
+
+
+
+How many fields are in your document? db.student.find({first_name: "Nick", last_name: "Adam"})         the number is 7
+
+Is there any new field added to your document? (yes/no) No, there are no new fields added to the document.
+
+If yes, what is the name of the field? (Since the answer to Blank 2 is "No," there is no need to specify the name of a new field.)
+
+Incorrect
+Acceptable answer for BLANK-1 is 8
+Responses must be an exact match
+Acceptable answer for BLANK-2 is yes
+Responses must be an exact match
+Acceptable answer for BLANK-3 is _id
+Responses must be an exact match
+
+Question 3
+1
+/
+1
+Final Grade: 1 point out of 1 point possible
+Write a command to remove the document that you created in Question 1.
+
+
+
+ (We have only one document at this time, but when removing documents make sure you will not remove some other documents if not needed. So, make sure your command will remove “Nick Adam” from your collection. For now, we assume that we do not have duplicate names in our database.)
+
+
+
+Note: To avoid making mistakes, you can first write a find command with the proper criteria to see if the required document is fetched. Then, you can use the same criteria in your delete statement. 
+
+Write the statement to remove “Nick Adam” from the database in the box below.
+
+Your Answer
+db.student.deleteOne({first_name: "Nick", last_name: "Adam"})
+ 
+output:
+seneca> db.student.deleteOne({first_name: "Nick", last_name: "Adam"})
+{ acknowledged: true, deletedCount: 1 }
+db.student.deleteOne({first_name: "Nick",last_name: "Adam"})
+OR
+db.student.remove({first_name: "Nick",last_name: "Adam"})
+
+Question 4
+1
+/
+1
+Final Grade: 1 point out of 1 point possible
+To see if the document that is removed successfully in Question 3, write a search statement to see if the document exists or not. (We look for one document not all).
+
+Your Answer
+db.student.find({first_name: "Nick", last_name: "Adam"})
+ 
+ 
+db.student.find({first_name: "Nick",last_name: "Adam"})
+
+Question 5
+2
+/
+2
+Final Grade: 2 points out of 2 points possible
+We want to add some students to our collection, but this time, we define the value for the _id field. (If the _id is not defined in your document, it will be added automatically.)
+
+_id: 1001
+first_name: Sarah
+last_name: Stone
+email: s_stone@email.com
+city: Toronto
+status: full-time
+gpa: 3.4
+program: CPA
+
+
+_id: 1002
+first_name: Jack
+last_name: Adam
+email: j_adam@email.com
+city: North York
+status: part-time
+gpa: 3.6
+program: CPA
+To add these students, we want to store these documents into a variable first.
+
+Define a variable named starray and add these two document to the variable. (You are storing more than one document so you need to define an array.)
+
+Use the variable starray to add these two documents to your collection student.
+
+Include both the variable declaration and the insert command in your answer.
+
+Your Answer
+// Define the starray variable 
+var starray = [
+  {
+    _id: 1001,
+    first_name: "Sarah",
+    last_name: "Stone",
+    email: "s_stone@email.com",
+    city: "Toronto",
+    status: "full-time",
+    gpa: 3.4,
+    program: "CPA"
+  },
+  {
+    _id: 1002,
+    first_name: "Jack",
+    last_name: "Adam",
+    email: "j_adam@email.com",
+    city: "North York",
+    status: "part-time",
+    gpa: 3.6,
+    program: "CPA"
+  }
+]
+ 
+ 
+// Insert the documents
+db.student.insertMany(starray)
+ 
+ 
+output:
+ 
+seneca> db.student.insertMany(starray)
+ 
+{ acknowledged: true, insertedIds: { '0': 1001, '1': 1002 } }
+stArray =
+[
+    {_id: 1001,first_name: "Sarah",last_name: "Stone",email: "s_stone@email.com",city: "Toronto",status: "full-time",gpa: 3.4,program: "CPA"},
+    
+    {_id: 1002,first_name: "Jack",last_name: "Adam",email: "j_adam@email.com",city: "North York",status: "part-time",gpa: 3.6,program: "CPA"}
+]
+db.student.insertMany(stArray)
+
+Question 6
+1
+/
+1
+Final Grade: 1 point out of 1 point possible
+Write a statement that shows all documents inserted in your collection student.
+
+Your Answer
+db.student.find({})  // shows all documents inserted in student collection!
+ 
+output:
+seneca> db.student.find({})
+[
+  {
+    _id: 1001,
+    first_name: 'Sarah',
+    last_name: 'Stone',
+    email: 's_stone@email.com',
+    city: 'Toronto',
+    status: 'full-time',
+    gpa: 3.4,
+    program: 'CPA'
+  },
+  {
+    _id: 1002,
+    first_name: 'Jack',
+    last_name: 'Adam',
+    email: 'j_adam@email.com',
+    city: 'North York',
+    status: 'part-time',
+    gpa: 3.6,
+    program: 'CPA'
+  }
+]
+db.student.find()
+
+Question 7
+1
+/
+1
+Final Grade: 1 point out of 1 point possible
+Write one statement to remove all documents in the student collection.
+
+Your Answer
+db.student.deleteMany({}) // It removes all the documents in student collection!
+ 
+output:
+seneca> db.student.deleteMany({})
+{ acknowledged: true, deletedCount: 2 }
+db.student.remove({})
+
+Question 8
+1
+/
+1
+Final Grade: 1 point out of 1 point possible
+Write a statement to drop the database seneca in the answer box. 
+
+Before dropping a database, write a command to make sure your current database is the one you want to delete. For this question, we want to delete (drop) the seneca database. 
+
+You can write the use statement before removing the database to make sure your current database is seneca. 
+
+use seneca
+
+
+Or, you can write the db or db.getName() statement to see the name of your current database:
+
+db
+db.getName()
+If your current database is not seneca, write the use statement to switch to seneca and then delete the database.
+
+Your Answer
+use seneca  
+db.dropDatabase()  // Drop the "seneca" database
+ 
+output:
+seneca> use seneca  
+already on db seneca
+seneca> db.dropDatabase()  
+{ ok: 1, dropped: 'seneca' }
+ 
+db.dropDatabase()

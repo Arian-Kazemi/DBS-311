@@ -1,0 +1,597 @@
+Question 1
+2
+/
+2
+Final Grade: 2 points out of 2 points possible
+Create a store procedure that accepts a string as input and prints out the string in lower case, along with the number of characters in the string in a format as the following examples shows.
+
+Input: flOwEr
+
+flower has 6 characters.
+Input: Te$t
+
+te$t has 4 characters.
+The procedure display a proper error message if any error occurs.
+
+Your Answer
+-- Creating the procedure
+CREATE OR REPLACE PROCEDURE DisplayStringInfo(p_input_string IN VARCHAR2) IS
+  v_lower_string VARCHAR2(32767);
+  v_string_length NUMBER;
+BEGIN
+  -- Convert the input string to lower chaaracter
+  v_lower_string := LOWER(p_input_string);
+ 
+ 
+  -- Calculating the length of the input string
+  v_string_length := LENGTH(p_input_string);
+ 
+ 
+  -- Display the lowercase string and its length
+  DBMS_OUTPUT.PUT_LINE(p_input_string || ' has ' || v_string_length || ' characters.');
+EXCEPTION
+  WHEN OTHERS THEN
+    -- Handle errors and display an error message
+    DBMS_OUTPUT.PUT_LINE('An error occurred: ' || SQLERRM);
+END;
+/
+ 
+ 
+-- Enable DBMS_OUTPUT and execute the procedure
+SET SERVEROUTPUT ON SIZE UNLIMITED;
+ 
+ 
+-- Execute the procedure with sample inputs
+BEGIN
+  DisplayStringInfo('flOwEr');
+  DisplayStringInfo('Te$t');
+END;
+/
+ 
+ 
+ 
+ 
+output:
+ 
+Procedure DISPLAYSTRINGINFO compiled
+ 
+ 
+PL/SQL procedure successfully completed.
+ 
+ 
+flOwEr has 6 characters.
+Te$t has 4 characters.
+ 
+ 
+SET SERVEROUTPUT on;
+CREATE OR REPLACE PROCEDURE printstring (str IN VARCHAR2) AS
+BEGIN
+  DBMS_OUTPUT.PUT_LINE(lower(str) || ' has ' || length(str) || ' characters.');
+EXCEPTION
+  WHEN OTHERS THEN
+    DBMS_OUTPUT.PUT_LINE('Error!');
+END;
+/
+BEGIN
+  printstring('Te$t');
+END;
+
+Question 2
+2
+/
+2
+Final Grade: 2 points out of 2 points possible
+Write a store procedure that takes an integer number as an employee ID and prints the number of years that employee has been working in the company. Round the number of years to the integer part.
+
+See the following sample output:
+
+The employee with ID 1004 has worked 5 years.
+The values in the sample output are random numbers and may not match the real numbers in the database. 
+
+The procedure display a proper error message if any error occurs.
+
+Your Answer
+CREATE OR REPLACE PROCEDURE CalculateEmployeeExperience(p_employee_id IN NUMBER) IS
+  v_hire_date DATE;
+  v_years_worked NUMBER;
+BEGIN
+  
+  SELECT hire_date INTO v_hire_date
+  FROM employees
+  WHERE employee_id = p_employee_id;
+ 
+ 
+  
+  v_years_worked := FLOOR(MONTHS_BETWEEN(SYSDATE, v_hire_date) / 12);
+ 
+ 
+  
+  DBMS_OUTPUT.PUT_LINE('The employee with ID ' || p_employee_id || ' has worked ' || v_years_worked || ' years.');
+EXCEPTION
+  WHEN NO_DATA_FOUND THEN
+    DBMS_OUTPUT.PUT_LINE('Employee with ID ' || p_employee_id || ' not found.');
+  WHEN OTHERS THEN
+    
+    DBMS_OUTPUT.PUT_LINE('An error occurred: ' || SQLERRM);
+END;
+/
+ 
+BEGIN
+  CalculateEmployeeExperience(1004);
+  CalculateEmployeeExperience(1005);
+END;
+/
+ 
+output:
+ 
+Procedure CALCULATEEMPLOYEEEXPERIENCE compiled
+ 
+ 
+PL/SQL procedure successfully completed.
+ 
+ 
+Employee with ID 1004 not found.
+Employee with ID 1005 not found.
+ 
+ 
+ 
+ 
+CREATE OR REPLACE PROCEDURE printemployee (employeeID NUMBER) AS
+  nOfYears NUMBER := 0;
+BEGIN
+  SELECT round(months_between(sysdate, hire_date) / 12, 0)
+  INTO nOfYears
+  FROM employees
+  WHERE employee_id = employeeID;
+   
+  DBMS_OUTPUT.PUT_LINE('The employee with ID ' || employeeID || ' has worked ' || nOfYears || ' years');
+ 
+EXCEPTION
+  WHEN NO_DATA_FOUND THEN
+    DBMS_OUTPUT.PUT_LINE('Employee ' || employeeID || ' does not exist!');
+  WHEN OTHERS THEN
+    DBMS_OUTPUT.PUT_LINE('Error!');
+END;
+/
+BEGIN
+  printemployee(40);
+END;
+
+
+The employee with ID 40 has worked 8 years
+
+Question 3
+2
+/
+2
+Final Grade: 2 points out of 2 points possible
+Create a stored procedure named find_product. This procedure gets an integer number as product ID and prints the product name, list price, number of orders that product has been ordered.
+
+The procedure gets a value as the product ID of type NUMBER.
+
+
+
+See the following sample output for product ID 132: 
+
+Product name: G.Skill Ripjaws V Series
+List price: 640.99
+Number of orders: 4
+The procedure display a proper error message if any error occurs.
+
+Your Answer
+CREATE OR REPLACE PROCEDURE find_product(p_product_id IN NUMBER) IS
+  v_product_name VARCHAR2(255);
+  v_list_price NUMBER(9, 2);
+  v_order_count NUMBER;
+BEGIN
+  
+  SELECT product_name, list_price
+  INTO v_product_name, v_list_price
+  FROM products
+  WHERE product_id = p_product_id;
+ 
+ 
+  
+  SELECT COUNT(*) INTO v_order_count
+  FROM order_items
+  WHERE product_id = p_product_id;
+ 
+ 
+  
+  DBMS_OUTPUT.PUT_LINE('Product name: ' || v_product_name);
+  DBMS_OUTPUT.PUT_LINE('List price: ' || TO_CHAR(v_list_price, '9999999.99'));
+  DBMS_OUTPUT.PUT_LINE('Number of orders: ' || v_order_count);
+EXCEPTION
+  WHEN NO_DATA_FOUND THEN
+    DBMS_OUTPUT.PUT_LINE('Product with ID ' || p_product_id || ' not found.');
+  WHEN OTHERS THEN
+   
+    DBMS_OUTPUT.PUT_LINE('An error occurred: ' || SQLERRM);
+END;
+/
+ 
+ 
+ 
+ 
+BEGIN
+  find_product(132);
+ 
+END;
+/
+ 
+ 
+ 
+output:
+Procedure FIND_PRODUCT compiled
+ 
+ 
+PL/SQL procedure successfully completed.
+ 
+ 
+Product name: Intel Core i7-5930K
+List price:      554.99
+Number of orders: 1
+ 
+ 
+ 
+ 
+SET SERVEROUTPUT ON;
+CREATE OR REPLACE PROCEDURE findproduct (productID IN NUMBER) AS
+  productName products.product_name%type;   -- %type allows referring the type from the corresponding table columns
+  listPrice products.list_price%type;
+  numberOfOrders number;
+BEGIN
+  SELECT products.product_name, products.list_price, 
+         (SELECT count(distinct order_id) 
+            FROM order_items 
+           WHERE product_id = productID)
+  INTO productName, listPrice, numberOfOrders
+  FROM products 
+  WHERE products.product_id = productID;
+   
+  DBMS_OUTPUT.PUT_LINE('Product name: ' || productName);
+  DBMS_OUTPUT.PUT_LINE('List price: ' || listPrice);
+  DBMS_OUTPUT.PUT_LINE('Number of orders: ' || numberOfOrders);
+EXCEPTION
+  WHEN TOO_MANY_ROWS THEN
+    DBMS_OUTPUT.PUT_LINE('Too Many Data!');
+  WHEN NO_DATA_FOUND THEN
+    DBMS_OUTPUT.PUT_LINE('No Data Found!');
+  WHEN OTHERS THEN
+    DBMS_OUTPUT.PUT_LINE('Error!');
+END;
+/
+BEGIN
+  findproduct(100);
+END;
+
+
+Product name: Crucial CT275MX300SSD1
+List price: 97.88
+Number of orders: 3
+
+Question 4
+2
+/
+2
+Final Grade: 2 points out of 2 points possible
+NOTE: For this question, create a table exactly the same as the products table.
+
+CREATE TABLE new_products AS
+SELECT *
+FROM products;
+Do not include the create statement in your answer.
+
+Use this new_products table to finish the following update on list prices.
+
+
+
+The company applies a yearly price increase of 5% to all products in certain categories if it satisfy a certain amount condition. Write a stored procedure takes an integer parameter representing the category ID, and a numerical parameter of type NUMBER(9,2) as amount. The stored procedure will increase the list price of all products in the given category by 5% only if the average list price of that category is lower than the provided amount (before the increasing).
+
+
+
+The procedure has two parameters:
+
+•  categoryID in NUMBER
+
+•  amount in NUMBER
+
+Name your procedure as newprice. In your procedure, if it updates the new_products successfully, a message of the number of the updated rows should be returned. 
+
+
+
+The procedure display a proper error message if any error occurs. See the following sample outputs:
+
+Test1:
+
+BEGIN
+  newprice(2, 10000);
+END;
+Output1:
+
+50 rows are updated.
+Test2:
+
+BEGIN
+  newprice(1, 500);
+END;
+Output2 ( just a reference ):
+
+Average of 1 is 1386.97, which is no lower than 500. We won't update the price!
+Your Answer
+-- Create a new_products table by copying the structure of the products table
+CREATE TABLE new_products AS
+SELECT * FROM products;
+CREATE OR REPLACE PROCEDURE newprice(p_category_id IN NUMBER, p_amount IN NUMBER) IS
+  v_category_avg_list_price NUMBER(9, 2);
+  v_row_count NUMBER;
+BEGIN
+  
+  SELECT AVG(list_price)
+  INTO v_category_avg_list_price
+  FROM new_products
+  WHERE category_id = p_category_id;
+ 
+ 
+  
+  IF v_category_avg_list_price < p_amount THEN
+    
+    UPDATE new_products
+    SET list_price = list_price * 1.05
+    WHERE category_id = p_category_id;
+    
+    
+    v_row_count := SQL%ROWCOUNT;
+    
+   
+    DBMS_OUTPUT.PUT_LINE(v_row_count || ' rows are updated.');
+  ELSE
+    DBMS_OUTPUT.PUT_LINE('Average of ' || p_category_id || ' is ' || v_category_avg_list_price ||
+                        ', which is not lower than ' || p_amount || '. We won''t update the price!');
+  END IF;
+EXCEPTION
+  WHEN NO_DATA_FOUND THEN
+    DBMS_OUTPUT.PUT_LINE('Category with ID ' || p_category_id || ' not found.');
+  WHEN OTHERS THEN
+    
+    DBMS_OUTPUT.PUT_LINE('An error occurred: ' || SQLERRM);
+END;
+/
+-- Drop the existing new_products table 
+DROP TABLE new_products;
+ 
+output:
+ 
+ 
+Table NEW_PRODUCTS created.
+ 
+ 
+ 
+ 
+Procedure NEWPRICE compiled
+ 
+ 
+Table NEW_PRODUCTS dropped.
+ 
+ 
+SET SERVEROUTPUT on;
+CREATE OR REPLACE PROCEDURE newprice (categoryID NUMBER, amount in NUMBER) AS
+  avgListPrice NUMBER(9,2);
+BEGIN
+  SELECT nvl(AVG(list_price),0)
+  INTO avgListPrice
+  FROM products
+  WHERE category_id = categoryID;
+ 
+  IF avgListPrice < amount THEN
+    UPDATE new_products
+    SET list_price = list_price * 1.05
+    WHERE category_id = categoryID;
+    IF SQL%rowcount = 0 THEN
+      DBMS_OUTPUT.PUT_LINE('No Row Updated!');
+    ELSE 
+      DBMS_OUTPUT.PUT_LINE(SQL%rowcount || ' rows are updated.');
+    END IF;
+  ELSE
+    DBMS_OUTPUT.PUT_LINE('Average list price in category '|| categoryID || ' is ' || avgListPrice || ', which is no lower than ' || amount ||'. We won''t update the price');
+  END IF;
+ 
+EXCEPTION
+  WHEN TOO_MANY_ROWS THEN
+    DBMS_OUTPUT.PUT_LINE('Too Many Data!');
+  WHEN NO_DATA_FOUND THEN
+    DBMS_OUTPUT.PUT_LINE('No Data Found!');
+  WHEN OTHERS THEN
+    DBMS_OUTPUT.PUT_LINE('Error!');
+END;
+/
+
+
+BEGIN
+  newprice(2, 10000);
+END;
+50 rows are updated.
+
+
+BEGIN
+  newprice(1, 500);
+END;
+Average of 1 is 1386.97, which is no lower than 500. We won't update the price!
+
+
+BEGIN
+  newprice(3, 10);
+END;
+no row updated!
+
+Question 5
+1.5
+/
+2
+Final Grade: 1.5 points out of 2 points possible
+The company needs a report that shows three categories of customers based on their credit limits: low, ordinary, and high. To determine the category of customers, the minimum credit limit, maximum credit limit, and the average credit limit of all customers must be calculated. Round the average credit limit to hundred places (like in lab 03). 
+
+If the credit limit is less than (average credit limit + minimum credit limit) / 2, then the customer’s credit limit is low.
+If the credit limit is greater than (maximum credit limit + average credit limit) / 2, then the customer’s credit limit is high.
+If the credit limit is between (average credit limit + minimum credit limit) / 2 and (maximum credit limit + average credit limit) / 2, then the customer’s credit limit is ordinary.
+Write a procedure named creditreport to show the number of customers in each category:
+
+
+
+See the following sample output:
+
+The number of customers with ordinary credit limit: 23
+The number of customers with high credit limit: 55
+The number of customers with low credit limit: 17 
+
+
+The values in the above examples are just random values and may not match the real numbers in your result.
+
+The procedure has no parameter. First, you need to find the average, minimum, and maximum credit limit in your database and store them into variables avgCredit, minCredit, and maxCredit.
+
+You need more three variables to store the number of customers in each category: odi_count, high_count, low_count
+
+Make sure you choose a proper type for each variable. You may need to define more variables based on your solution.
+
+The procedure display a proper error message if any error occurs.
+
+Your Answer
+CREATE OR REPLACE PROCEDURE creditreport IS
+  avgCredit NUMBER(8, 2);
+  minCredit NUMBER(8, 2);
+  maxCredit NUMBER(8, 2);
+  odi_count NUMBER;
+  high_count NUMBER;
+  low_count NUMBER;
+BEGIN
+  
+  SELECT ROUND(AVG(credit_limit), 2), MIN(credit_limit), MAX(credit_limit)
+  INTO avgCredit, minCredit, maxCredit
+  FROM customers;
+ 
+ 
+  
+  SELECT COUNT(*) INTO odi_count
+  FROM customers
+  WHERE credit_limit >= (avgCredit + minCredit) / 2
+  AND credit_limit <= (maxCredit + avgCredit) / 2;
+ 
+ 
+  SELECT COUNT(*) INTO high_count
+  FROM customers
+  WHERE credit_limit > (maxCredit + avgCredit) / 2;
+ 
+ 
+  SELECT COUNT(*) INTO low_count
+  FROM customers
+  WHERE credit_limit < (avgCredit + minCredit) / 2;
+ 
+ 
+ 
+ 
+  DBMS_OUTPUT.PUT_LINE('The number of customers with ordinary credit limit: ' || odi_count);
+  DBMS_OUTPUT.PUT_LINE('The number of customers with high credit limit: ' || high_count);
+  DBMS_OUTPUT.PUT_LINE('The number of customers with low credit limit: ' || low_count);
+EXCEPTION
+  WHEN NO_DATA_FOUND THEN
+    DBMS_OUTPUT.PUT_LINE('No customer data found.');
+  WHEN OTHERS THEN
+   
+    DBMS_OUTPUT.PUT_LINE('An error occurred: ' || SQLERRM);
+END;
+/
+BEGIN
+  creditreport;
+END;
+/
+ 
+ 
+ 
+output:
+Procedure CREDITREPORT compiled
+ 
+ 
+PL/SQL procedure successfully completed.
+ 
+ 
+The number of customers with ordinary credit limit: 133
+The number of customers with high credit limit: 76
+The number of customers with low credit limit: 110
+ 
+ 
+ 
+logs:
+DISPLAYSTRINGINFO Compiled 
+DISPLAYSTRINGINFO Compiled 
+DISPLAYSTRINGINFO Compiled 
+DISPLAYSTRINGINFO Compiled 
+DISPLAYSTRINGINFO Compiled 
+CALCULATEEMPLOYEEEXPERIENCE Compiled 
+CALCULATEEMPLOYEEEXPERIENCE Compiled 
+CALCULATEEMPLOYEEEXPERIENCE Compiled 
+CALCULATEEMPLOYEEEXPERIENCE Compiled 
+FIND_PRODUCT Compiled 
+FIND_PRODUCT Compiled 
+FIND_PRODUCT Compiled 
+FIND_PRODUCT Compiled 
+NEWPRICE Compiled (with errors) 
+NEWPRICE Compiled (with errors) 
+NEWPRICE Compiled 
+NEWPRICE Compiled 
+NEWPRICE Compiled 
+CREDITREPORT Compiled 
+CREDITREPORT Compiled 
+CREDITREPORT Compiled 
+CREDITREPORT Compiled 
+ 
+ 
+set serveroutput on;
+CREATE OR REPLACE PROCEDURE creditreport AS
+  avgCredit  customers.credit_limit%type;
+  minCredit  customers.credit_limit%type;
+  maxCredit  customers.credit_limit%type;
+  odi_count  NUMBER;
+  high_count NUMBER;
+  low_count  NUMBER;
+BEGIN
+  SELECT MIN(credit_limit), MAX(credit_limit), ROUND(AVG(credit_limit),-2)
+  INTO minCredit, maxCredit, avgCredit
+  FROM customers;
+   
+  SELECT count(*)
+  INTO low_count
+  FROM customers
+  WHERE credit_limit < (avgCredit + minCredit) / 2;
+   
+  SELECT count(*)
+  INTO high_count
+  FROM customers
+  WHERE credit_limit > (maxCredit + avgCredit) / 2;
+   
+  SELECT count(*)
+  INTO odi_count
+  FROM customers
+  WHERE credit_limit BETWEEN (avgCredit + minCredit) / 2 AND (maxCredit + avgCredit) / 2;
+ 
+  DBMS_OUTPUT.PUT_LINE('The number of customers with ordinary credit limit: ' || odi_count);
+  DBMS_OUTPUT.PUT_LINE('The number of customers with high credit limit: ' || high_count);
+  DBMS_OUTPUT.PUT_LINE('The number of customers with low credit limit: ' || low_count);
+ 
+EXCEPTION
+  WHEN TOO_MANY_ROWS THEN
+    DBMS_OUTPUT.PUT_LINE('Too Many Data!');
+  WHEN NO_DATA_FOUND THEN
+    DBMS_OUTPUT.PUT_LINE('No Data Found!');
+  WHEN OTHERS THEN 
+    DBMS_OUTPUT.PUT_LINE('Error!');
+END;
+/
+BEGIN
+  creditreport();
+END;
+/
+
+
+The number of customers with average credit limit: 133
+The number of customers with high credit limit: 76
+The number of customers with low credit limit: 110

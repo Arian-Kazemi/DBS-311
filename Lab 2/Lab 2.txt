@@ -1,0 +1,330 @@
+Lab Instruction:
+Answer each question in the provided space.
+You must include the solution (SQL Statement) and the output of the query for each question.
+quote you code and output in a code snippet
+See the following example:
+
+SELECT order_id, customer_id
+ FROM orders
+WHERE order_id < 5
+ORDER BY order_id;
+ 
+  ORDER_ID CUSTOMER_ID
+---------- -----------
+         1           4
+         2           4
+         3           5
+         4           8
+To generate the result like the above output, select the SQL statement, use the "Run Script" button to execute the query, and copy the result from the output box to the answer box in your lab. If one column is too long, use the following command to format the output.
+
+COLUMN city FORMAT A20;
+'city' is your column name, A20 means you want your column to be 20 char long. You should set it accordingly. Make sure your code does not generate errors before submitting a solution.
+
+
+
+Style Guide:
+
+Your SQL should be written using the standard coding style:
+all keywords are to be upper case,
+all user-defined names are to be lower case, (example: table and field names)
+there should be a carriage return before each major part of the SQL statements (i.e. before SELECT, FROM, WHERE and ORDER BY)
+
+Question 1
+1.5
+/
+2
+Final Grade: 1.5 points out of 2 points possible
+Display the total number of products and the total order amount (cost) for the order where the total number of products is more than 1000. Sort the result based on the order id.
+
+See the labels for the column labels in your result:
+
+Order ID    Total Quantity  Total Amount
+--------  ----------------- -----------------
+This query returns 5 rows.
+
+Your Answer
+SELECT o.order_id AS "Order ID",
+       SUM(oi.quantity) AS "Total Quantity",
+       SUM(p.standard_cost * oi.quantity) AS "Total Amount"
+FROM orders o
+JOIN order_items oi ON o.order_id = oi.order_id
+JOIN products p ON oi.product_id = p.product_id
+GROUP BY o.order_id
+HAVING SUM(oi.quantity) > 1000
+ORDER BY o.order_id;
+ 
+output:
+ 
+ Order ID                          Total Quantity                            Total Amount
+---------- --------------------------------------- ---------------------------------------
+         1                                    1343                               899588.36
+        12                                    1074                                  573459
+        27                                    1203                               910770.31
+        46                                    1032                              1030403.13
+        87                                    1027                                658022.1
+SELECT order_id, 
+  SUM(quantity) AS "Total Quantity",
+  SUM(unit_price*quantity) AS "Total Amount"
+FROM order_items
+GROUP BY order_id
+HAVING SUM(quantity) > 1000
+ORDER BY order_id;
+
+
+  ORDER_ID Total Quantity Total Amount
+---------- -------------- ------------
+         1           1343   1143716.87
+        12           1074    752198.64
+        27           1203   1084871.49
+        46           1032   1269323.77
+        87           1027    776785.85
+
+Question 2
+2
+/
+2
+Final Grade: 2 points out of 2 points possible
+For all customer, display customer number, customer full name, and the total number of orders issued by the customer. 
+
+If the customer does not have any orders, the number of orders shows 0.
+Display only customers whose customer name starts with 'C' and has 'e' as the second letter or the third letter.
+Sort the result first by the number of orders and then by customer ID.
+See the column labels in the output:
+
+CUSTOMER_ID  NAME          Number of Orders
+------------ ---------  ------------------------------  
+This query returns 5 rows.
+
+Your Answer
+COLUMN NAME FORMAT A30;
+COLUMN CUSTOMER_ID FORMAT A13;
+COLUMN "Number of Orders" FORMAT A20;
+SELECT c.customer_id AS "CUSTOMER_ID",
+       c.name AS "NAME",
+       COALESCE(COUNT(o.order_id), 0) AS "Number of Orders"
+FROM customers c
+LEFT JOIN orders o ON c.customer_id = o.customer_id
+WHERE c.name LIKE 'C_e%' OR c.name LIKE 'Ce%'
+GROUP BY c.customer_id, c.name
+ORDER BY COUNT(o.order_id) DESC, c.customer_id;
+ 
+ 
+output:
+  CUSTOMER_ID NAME                                                  Number of Orders
+------------- ------------------------------ ---------------------------------------
+           45 CenturyLink                                                          5
+            5 Centene                                                              4
+          101 Chevron                                                              0
+          247 Celgene                                                              0
+          257 Chesapeake Energy                                                    0
+ 
+ 
+SELECT c.customer_id, c.name, count(order_id) as "Number of Orders"
+FROM customers c
+LEFT JOIN orders o
+  ON c.customer_id = o.customer_id
+WHERE c.name LIKE 'Ce%' or c.name LIKE 'C_e%'
+GROUP BY c.customer_id, c.name
+ORDER BY "Number of Orders", customer_id;
+
+
+CUSTOMER_ID NAME                 Number of Orders
+----------- -------------------- ----------------
+        101 Chevron                             0
+        247 Celgene                             0
+        257 Chesapeake Energy                   0
+          5 Centene                             4
+         45 CenturyLink                         5
+
+Question 3
+2
+/
+2
+Final Grade: 2 points out of 2 points possible
+Write a SQL statement to display Category ID, Category Name, the average list_price, and the number of products for all categories in the product_categories table.
+
+For categories in product_categories that do not have any matching rows in products, the average price and the number of products are shown as 0.
+Round the average price to two decimal places.
+Sort the result by category ID.
+See the output labels:
+
+CATEGORY_ID     CATEGORY_NAME    Average Price   Number of Products
+------------ ---------------- ---------------- ------------------------
+ 
+This query returns 5 rows.
+
+Your Answer
+COLUMN category_id FORMAT A13;
+COLUMN CATEGORY_NAME  FORMAT A20;
+COLUMN Average Price  FORMAT A20;
+ 
+ 
+SELECT pc.category_id AS "CATEGORY_ID",
+       pc.category_name AS "CATEGORY_NAME",
+       ROUND(COALESCE(AVG(p.list_price), 0), 2) AS "Average Price",
+       COALESCE(COUNT(p.product_id), 0) AS "Number of Products"
+FROM product_categories pc
+LEFT JOIN products p ON pc.category_id = p.category_id
+GROUP BY pc.category_id, pc.category_name
+ORDER BY pc.category_id;
+ 
+OUTPUT:
+ 
+  CATEGORY_ID CATEGORY_NAME                                  Average Price                      Number of Products
+------------- -------------------- --------------------------------------- ---------------------------------------
+            1 CPU                                                  1386.97                                      70
+            2 Video Card                                            1406.1                                      50
+            3 RAM                                                        0                                       0
+            4 Mother Board                                          402.29                                      60
+            5 Storage                                               635.22                                     108
+SELECT C.category_id, C.category_name, 
+        nvl(round(AVG(list_price),2),0) AS "Average Price",
+       count(product_id) as "Number of Products"
+FROM product_categories C
+LEFT JOIN products P
+  ON C.category_id = P.category_id
+GROUP BY C.category_id, C.category_name
+ORDER BY C.category_id;
+
+
+CATEGORY_ID CATEGORY_NAME        Average Price Number of Products
+----------- -------------------- ------------- ------------------
+          1 CPU                        1386.97                 70
+          2 Video Card                  1406.1                 50
+          3 RAM                              0                  0
+          4 Mother Board                402.29                 60
+          5 Storage                     635.22                108
+
+Question 4
+2
+/
+2
+Final Grade: 2 points out of 2 points possible
+Write a SQL statement to display the number of different products and the total quantity of all products for each warehouse.
+
+Sort the result according to the quantity of all products.
+
+See the output column labels:
+
+WAREHOUSE_ID  Number of Different Products   Quantity of all products
+------------  ----------------------------  -------------------------------
+This query returns 9 rows.
+
+Your Answer
+COLUMN  WAREHOUSE_ID  FORMAT A20;
+SELECT w.warehouse_id AS "WAREHOUSE_ID",
+       COUNT(DISTINCT i.product_id) AS "Number of Different Products",
+       SUM(i.quantity) AS "Quantity of all products"
+FROM warehouses w
+LEFT JOIN inventories i ON w.warehouse_id = i.warehouse_id
+GROUP BY w.warehouse_id
+ORDER BY SUM(i.quantity) DESC;
+ 
+OUTPUT:
+                           WAREHOUSE_ID            Number of Different Products                Quantity of all products
+--------------------------------------- --------------------------------------- ---------------------------------------
+                                      2                                     177                                   28613
+                                      6                                     208                                   20457
+                                      4                                     109                                   14860
+                                      8                                     186                                   13482
+                                      5                                     114                                   12969
+                                      7                                     106                                    9039
+                                      9                                     128                                    7357
+                                      3                                      48                                    7252
+                                      1                                      36                                    5483
+ 
+ 
+ 9 rows selected 
+ 
+ 
+        WAREHOUSE_ID            Number of Different Products                Quantity of all products
+-------------------- --------------------------------------- ---------------------------------------
+                   2                                     177                                   28613
+                   6                                     208                                   20457
+                   4                                     109                                   14860
+                   8                                     186                                   13482
+                   5                                     114                                   12969
+                   7                                     106                                    9039
+                   9                                     128                                    7357
+                   3                                      48                                    7252
+                   1                                      36                                    5483
+ 
+ 
+ 
+SELECT warehouse_id, COUNT(DISTINCT product_id) AS "Number of Different Products",
+       SUM(quantity) AS "Quantity of all products"
+FROM   inventories
+GROUP BY warehouse_id
+ORDER BY "quantity of all products";
+
+
+
+
+WAREHOUSE_ID   Number of Different Products  Quantity of all products
+------------  ----------------------------  ------------------------
+      1             36                  5483
+      3             48                  7252
+      9             128                 7357
+      7             106                 9039
+      5             114                 12969
+      8             186                 13482
+      4             109                 14860
+      6             208                 20457
+      2             177                 28613
+
+Question 5
+2
+/
+2
+Final Grade: 2 points out of 2 points possible
+Write a SQL statement to display the number of warehouses for each region. You may need to join multi tables.
+
+Display the region id, the region name and the number of warehouses in your result.
+Sort the result by the region id.
+
+
+See the labels of output columns:
+
+REGION_ID         Region Name      Number of Warehouses
+---------- -------------------  -------------------------------
+This query returns 2 rows.
+
+Your Answer
+ 
+ 
+SELECT r.region_id AS "REGION_ID",
+       r.region_name AS "Region Name",
+       COUNT(w.warehouse_id) AS "Number of Warehouses"
+FROM regions r
+LEFT JOIN countries c ON r.region_id = c.region_id
+LEFT JOIN locations l ON c.country_id = l.country_id
+LEFT JOIN warehouses w ON l.location_id = w.location_id
+GROUP BY r.region_id, r.region_name
+ORDER BY r.region_id;
+ 
+output:
+ 
+ REGION_ID Region Name                                                           Number of Warehouses
+---------- -------------------------------------------------- ---------------------------------------
+         1 Europe                                                                                   0
+         2 Americas                                                                                 6
+         3 Asia                                                                                     3
+         4 Middle East and Africa                                                                   0
+ 
+ 
+SELECT r.region_id, r.region_name as "Region Name", 
+        COUNT(warehouse_id) AS "Number of Warehouses"
+FROM warehouses w
+INNER JOIN locations L
+        ON w.location_id = L.location_id
+INNER JOIN countries co
+        ON co.country_id = L.country_id
+INNER JOIN regions r
+        ON r.region_id = co.region_id
+GROUP BY r.region_id, r.region_name;
+
+
+REGION_ID   Region Name    Number of Warehouses
+---------- ------------- --------------------
+2	       Americas	     6
+3	       Asia          3

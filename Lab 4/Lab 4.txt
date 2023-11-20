@@ -1,0 +1,271 @@
+Question 1
+1.5
+/
+2
+Final Grade: 1.5 points out of 2 points possible
+Write a SQL query to show the total number of customers and employees in the database.
+
+The query returns one row.
+
+Please see the following output:
+
+Report                                   
+-----------------------------------------------------------
+Total number of customers and employees: XXX
+Your Answer
+SELECT 'Total number of customers and employees: ' || TO_CHAR((SELECT COUNT(*) FROM customers) + (SELECT COUNT(*) FROM employees)) AS "Report"
+FROM dual;
+ 
+ 
+output:
+ 
+Report                                                                          
+---------------------------------------------------------------------------------
+Total number of customers and employees: 426                                     
+ 
+ 
+SELECT 'Number of customers and employees: ' || SUM(thecount) AS "report"
+FROM
+      (SELECT COUNT(customer_id) AS thecount
+      FROM customers
+        UNION ALL
+      SELECT COUNT(employee_id) AS thecount
+      FROM employees);
+
+
+Report                                   
+---------------------------------------------------------------------------
+Number of customers and employees: 426
+
+Question 2
+1.5
+/
+2
+Final Grade: 1.5 points out of 2 points possible
+Write a SQL query to display number of customers with no order.
+
+You are not allowed to use JOINs to answer this question.
+
+
+
+The query returns 1 row. See the following output column:
+
+Number of Customers 
+---------------------------------
+Your Answer
+SELECT 'Number of Customers' AS "Count",
+       COUNT(*) AS "Number of Customers"
+FROM customers
+WHERE customer_id NOT IN (SELECT DISTINCT customer_id FROM orders);
+ 
+ 
+output:
+ 
+Count                                   Number of Customers
+------------------- ---------------------------------------
+Number of Customers                                     272
+ 
+ 
+SELECT COUNT(customer_id) as "Number of Customers"
+FROM (
+    SELECT customer_id
+    FROM customers
+      MINUS
+    SELECT DISTINCT customer_id
+    FROM orders);
+
+
+Number of Customers
+---------------------------------
+        272
+
+Question 3
+1.5
+/
+2
+Final Grade: 1.5 points out of 2 points possible
+Write a SQL query to display the number of customers with orders and the number of sales persons who have generated orders. Please display the numbers as the following output.
+
+REPORT                                  
+-------------------------------------------------------------------------
+Number of customers with orders: ??
+Number of sales persons: ?
+Your Answer
+SELECT 'Number of customers with orders: ' || (SELECT COUNT(DISTINCT customer_id) FROM orders) || CHR(10) ||
+       'Number of sales persons: ' || (SELECT COUNT(DISTINCT salesman_id) FROM orders) AS "REPORT"
+FROM dual;
+ 
+ 
+output:
+ 
+REPORT                                                                                                                                    
+-------------------------------------------------------------------------------------------------------------------------------------------
+Number of customers with orders: 47
+Number of sales persons: 9                                                                              
+ 
+ 
+SELECT 'Number of customers with orders: ' || COUNT(DISTINCT CUSTOMER_ID) AS "REPORT"
+FROM ORDERS
+    UNION
+SELECT 'Number of sales persons: ' || COUNT(DISTINCT SALESMAN_ID) AS "REPORT"
+FROM ORDERS;
+
+
+REPORT                                  
+-------------------------------------------------------------------------
+Number of customers with orders: 47
+Number of sales persons: 9
+
+Question 4
+1.5
+/
+2
+Final Grade: 1.5 points out of 2 points possible
+Write a SQL query to display contacts who share the first name and the first letter of the last name (case-sensitive) with an employee(s).
+
+You are not allowed to use JOINs in this query.
+
+Sort the result by first name and the first letter of last name.
+
+
+
+The query returns 1 row. See the output columns:
+
+FIRST_NAME  First Letter of Last Name
+---------- ----------------------------
+Your Answer
+COLUMN first_name FORMAT A10
+COLUMN "First Letter of Last Name" FORMAT A15
+ 
+ 
+SELECT c.first_name AS "FIRST_NAME",
+       SUBSTR(c.last_name, 1, 1) AS "First Letter of Last Name"
+FROM contacts c
+WHERE (c.first_name, SUBSTR(c.last_name, 1, 1)) IN
+      (SELECT e.first_name, SUBSTR(e.last_name, 1, 1) FROM employees e)
+ORDER BY c.first_name, "First Letter of Last Name";
+ 
+ 
+output:
+ 
+FIRST_NAME F
+---------- -
+Nathan     C
+ 
+ 
+SELECT first_name, substr(last_name,1,1) AS "First Letter of Last name"
+FROM contacts
+      INTERSECT
+SELECT first_name, substr(last_name,1,1) AS "First Letter of Last name"
+FROM employees
+ORDER BY first_name, "First Letter of Last name";
+ 
+Technically, We are supposed to use INTERSECT ALL, but Oracle 11g doesn't support this operator. The following one is a more accurate answer.
+
+
+
+SELECT first_name, substr(last_name,1,1) AS "First Letter of Last name"
+FROM contacts
+where (first_name, substr(last_name,1,1)) IN (
+        SELECT first_name, substr(last_name,1,1)
+        FROM employees)
+ORDER BY first_name, "First Letter of Last name";
+
+
+FIRST_NAME  First Letter of Last Name
+---------- ----------------------------
+Nathan       C
+
+Question 5
+1.5
+/
+2
+Final Grade: 1.5 points out of 2 points possible
+Write a SQL query to display location ID and warehouse ID for all locations, including locations without a warehouse.
+
+You are not allowed to use JOINs.
+
+First display locations with a warehouse and then locations with no warehouse.
+For locations with no warehouse, display 'NULL' for the warehouse ID.
+
+
+The query returns 23 rows. See the following output:
+
+LOCATION_ID WAREHOUSE_ID                            
+----------- ----------------
+          5 1                                       
+          6 2                                       
+          7 3                                       
+          8 4                                       
+          9 5                                       
+         13 6                                       
+         23 7                                       
+         11 8                                       
+         12 9                                       
+          1 NULL                                    
+          2 NULL                                    
+          3 NULL                                    
+          4 NULL                                    
+         10 NULL                                    
+         14 NULL                                    
+         15 NULL                                    
+         16 NULL                                    
+         17 NULL                                    
+         18 NULL                                    
+         19 NULL                                    
+         20 NULL                                    
+         21 NULL                                    
+         22 NULL                                    
+Your Answer
+COLUMN location_id FORMAT A13
+COLUMN warehouse_id FORMAT A15
+SELECT location_id, warehouse_id
+FROM warehouses
+UNION ALL
+SELECT location_id, NULL AS warehouse_id
+FROM locations
+WHERE location_id NOT IN (SELECT location_id FROM warehouses)
+ORDER BY location_id;
+ 
+output:
+  LOCATION_ID    WAREHOUSE_ID
+------------- ---------------
+            1                
+            2                
+            3                
+            4                
+            5               1
+            6               2
+            7               3
+            8               4
+            9               5
+           10                
+           11               8
+           12               9
+           13               6
+           14                
+           15                
+           16                
+           17                
+           18                
+           19                
+           20                
+           21                
+           22                
+           23               7
+ 
+ 
+ 23 rows selected 
+ 
+ 
+SELECT location_id, to_char(warehouse_id) as warehouse_id
+  FROM warehouses
+UNION ALL
+SELECT location_id, 'NULL' 
+  FROM  
+      (SELECT location_id
+         FROM locations
+      MINUS
+       SELECT location_id
+         FROM warehouses)
+;

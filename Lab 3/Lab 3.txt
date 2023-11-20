@@ -1,0 +1,819 @@
+Lab Instruction:
+Answer each question in the provided space.
+You must include the solution (SQL Statement) and the output of the query for each question.
+quote you code and output in a code snippet
+See the following example:
+
+SELECT order_id, customer_id
+ FROM orders
+WHERE order_id < 5
+ORDER BY order_id;
+ 
+  ORDER_ID CUSTOMER_ID
+---------- -----------
+         1           4
+         2           4
+         3           5
+         4           8
+To generate the result like the above output, select the SQL statement, use the "Run Script" button to execute the query, and copy the result from the output box to the answer box in your lab. If one column is too long, use the following command to format the output.
+
+COLUMN city FORMAT A20;
+'city' is your column name, A20 means you want your column to be 20 char long. You should set it accordingly. Make sure your code does not generate errors before submitting a solution.
+
+
+
+Style Guide:
+
+Your SQL should be written using the standard coding style:
+all keywords are to be upper case,
+all user-defined names are to be lower case, (example: table and field names)
+there should be a carriage return before each major part of the SQL statements (i.e. before SELECT, FROM, WHERE and ORDER BY)
+
+For all the query questions, please ensure that your query logic is correct. It is important to verify that the query is not solely returning the same result without accurate query logic, as marks will not be awarded for such an approach.
+
+
+Question 1
+0.5
+/
+1.5
+Final Grade: 0.5 points out of 1.5 points possible
+Write a SQL query to display the last name and hire date of all employees who were hired before the employee with ID 46 got hired but after August 2016. 
+
+Sort the result by the hire date and then employee ID.
+
+This query returns 5 rows as following.
+
+
+
+LAST_NAME       HIRE_DATE      
+--------------- ---------------
+Dunn            16-09-17       
+Rivera          16-09-21       
+Ramirez         16-09-28       
+Long            16-09-28       
+James           16-09-30 
+Your Answer
+COLUMN last_name FORMAT A15    /* These 2 lines are doing the formating!
+COLUMN hire_date FORMAT A12   */
+ 
+ 
+SELECT last_name, TO_CHAR(hire_date, 'DD-MM-YY') AS hire_date  /* TO_CHAR function that               convert the hire date to DD,MM,YY format*/
+FROM employees
+WHERE hire_date > TO_DATE('2016-08-01', 'YYYY-MM-DD')  -- Filtering the results
+AND employee_id < 46  -- filtering the emp id which lower than 46
+ORDER BY hire_date, employee_id; --ordering the data
+ 
+output:
+ 
+LAST_NAME       HIRE_DATE  
+--------------- ------------
+Brooks          07-12-16    
+Kelly           07-12-16    
+Barnes          10-08-16    
+Jenkins         10-10-16    
+Bryant          12-12-16    
+Wood            15-11-16    
+Gray            16-08-16    
+Perry           16-11-16    
+Peterson        17-08-16    
+Myers           17-10-16    
+Flores          20-08-16    
+ 
+ 
+LAST_NAME       HIRE_DATE  
+--------------- ------------
+Rivera          21-09-16    
+Price           24-12-16    
+Gonzales        26-08-16    
+Griffin         26-10-16    
+Ramirez         28-09-16    
+Long            28-09-16    
+James           30-09-16    
+Washington      30-10-16    
+ 
+ 
+ 19 rows selected 
+ 
+ 
+select e.last_name, e.hire_date 
+ from employees e 
+where e.hire_date > to_date('2016-08-31', 'yyyy-mm-dd')
+ and e.hire_date < 
+           (select ee.hire_date 
+           from employees ee 
+           where ee.employee_id=46)
+order by e.hire_date, e.employee_id;
+
+Question 2
+0
+/
+1.5
+Final Grade: 0 points out of 1.5 points possible
+Write a SQL query to display customer name and credit limit for customers with average credit limit. Round the average to the hundredths place.
+
+Sort the result by customer ID.
+
+This query returns 4 rows as following.
+
+NAME                    CREDIT_LIMIT
+--------------------    ------------
+Wells Fargo                  1900
+Baxter International         1900
+Kellogg                      1900
+C.H. Robinson Worldwide      1900
+Your Answer
+COLUMN name FORMAT A40
+COLUMN credit_limit FORMAT A20
+ 
+SELECT name, TO_CHAR(credit_limit, '9999.99') AS credit_limit /* TO_CHAR function will convert the original value of credit limit to formatted with width of 9999.99 */
+FROM customers
+ORDER BY customer_id;
+ 
+ 
+ 
+output:
+ 
+NAME                                     CREDIT_LIMIT  
+---------------------------------------- ---------------
+Raytheon                                   100.00       
+Plains GP Holdings                         100.00       
+US Foods Holding                           100.00       
+AbbVie                                     100.00       
+Centene                                    100.00       
+Community Health Systems                   100.00       
+Alcoa                                      100.00       
+International Paper                        100.00       
+Emerson Electric                           100.00       
+Union Pacific                              200.00       
+Amgen                                      200.00       
+ 
+ 
+NAME                                     CREDIT_LIMIT  
+---------------------------------------- ---------------
+U.S. Bancorp                               200.00       
+Staples                                    200.00       
+Danaher                                    200.00       
+Whirlpool                                  200.00       
+Aflac                                      200.00       
+AutoNation                                 200.00       
+Progressive                                200.00       
+Abbott Laboratories                        200.00       
+Dollar General                             200.00       
+Tenet Healthcare                           200.00       
+Eli Lilly                                  200.00       
+ 
+ 
+NAME                                     CREDIT_LIMIT  
+---------------------------------------- ---------------
+DTE Energy                                 200.00       
+Southwest Airlines                         200.00       
+Penske Automotive Group                    200.00       
+ManpowerGroup                              300.00       
+Assurant                                   300.00       
+Kohl?s                                     300.00       
+Starbucks                                  400.00       
+Paccar                                     400.00       
+Cummins                                    400.00       
+Global Partners                            400.00       
+Altria Group                               400.00       
+ 
+ 
+NAME                                     CREDIT_LIMIT  
+---------------------------------------- ---------------
+Xerox                                      400.00       
+Kimberly-Clark                             400.00       
+Hartford Financial Services Group          400.00       
+Huntsman                                   500.00       
+Kraft Heinz                                500.00       
+Lear                                       500.00       
+Fluor                                      500.00       
+AECOM                                      500.00       
+Becton Dickinson                           500.00       
+Facebook                                   500.00       
+Jabil Circuit                              500.00       
+ 
+ 
+NAME                                     CREDIT_LIMIT  
+---------------------------------------- ---------------
+CenturyLink                                500.00       
+Supervalu                                  500.00       
+General Mills                              600.00       
+Southern                                   600.00       
+NextEra Energy                             600.00       
+Thermo Fisher Scientific                   700.00       
+American Electric Power                    700.00       
+PG&E Corp.                                 700.00       
+NGL Energy Partners                        700.00       
+Bristol-Myers Squibb                       700.00       
+Goodyear Tire & Rubber                     700.00       
+ 
+ 
+NAME                                     CREDIT_LIMIT  
+---------------------------------------- ---------------
+Nucor                                      700.00       
+PNC Financial Services Group               700.00       
+Health Net                                 700.00       
+Micron Technology                          700.00       
+Colgate-Palmolive                          700.00       
+Freeport-McMoRan                           900.00       
+ConAgra Foods                              900.00       
+Sempra Energy                              900.00       
+Gap                                       1200.00       
+Baker Hughes                              1200.00       
+Bank of New York Mellon Corp.             1200.00       
+ 
+ 
+NAME                                     CREDIT_LIMIT  
+---------------------------------------- ---------------
+Dollar Tree                               1200.00       
+AutoZone                                  1200.00       
+Whole Foods Market                        1200.00       
+PPG Industries                            1200.00       
+Genuine Parts                             1200.00       
+Icahn Enterprises                         1200.00       
+Navistar International                    1200.00       
+Performance Food Group                    1200.00       
+Omnicom Group                             1200.00       
+DISH Network                              1200.00       
+FirstEnergy                               1200.00       
+ 
+ 
+NAME                                     CREDIT_LIMIT  
+---------------------------------------- ---------------
+Precision Castparts                       1200.00       
+Monsanto                                  1200.00       
+AES                                       1200.00       
+CarMax                                    1200.00       
+Discover Financial Services               1200.00       
+National Oilwell Varco                    1200.00       
+NRG Energy                                1200.00       
+Western Digital                           1200.00       
+Marriott International                    1200.00       
+Liberty Interactive                       1200.00       
+Walmart                                   1200.00       
+ 
+ 
+NAME                                     CREDIT_LIMIT  
+---------------------------------------- ---------------
+Exxon Mobil                               1200.00       
+Apple                                     1200.00       
+Berkshire Hathaway                        1200.00       
+McKesson                                  1200.00       
+UnitedHealth Group                        1200.00       
+CVS Health                                1200.00       
+General Motors                            1200.00       
+Ford Motor                                1200.00       
+AT&T                                      1200.00       
+General Electric                          1200.00       
+AmerisourceBergen                         1400.00       
+ 
+ 
+NAME                                     CREDIT_LIMIT  
+---------------------------------------- ---------------
+Verizon                                   1400.00       
+Chevron                                   1400.00       
+Costco                                    1400.00       
+Fannie Mae                                1400.00       
+Kroger                                    1400.00       
+Amazon.com                                1400.00       
+Walgreens Boots Alliance                  1400.00       
+HP                                        1400.00       
+Cardinal Health                           1400.00       
+Express Scripts Holding                   1400.00       
+J.P. Morgan Chase                         1400.00       
+ 
+ 
+NAME                                     CREDIT_LIMIT  
+---------------------------------------- ---------------
+W.W. Grainger                             1500.00       
+Boeing                                    1500.00       
+Microsoft                                 1500.00       
+Bank of America Corp.                     1500.00       
+Wells Fargo                               1900.00       
+Baxter International                      1900.00       
+Home Depot                                2300.00       
+Citigroup                                 2300.00       
+Phillips 66                               2300.00       
+Stryker                                   2300.00       
+IBM                                       2300.00       
+ 
+ 
+NAME                                     CREDIT_LIMIT  
+---------------------------------------- ---------------
+Valero Energy                             2300.00       
+Anthem                                    2300.00       
+Procter & Gamble                          2300.00       
+Air Products & Chemicals                  2300.00       
+State Farm Insurance Cos.                 2300.00       
+Alphabet                                  2400.00       
+Comcast                                   2400.00       
+Target                                    2400.00       
+Western Refining                          2400.00       
+Johnson & Johnson                         2400.00       
+MetLife                                   2400.00       
+ 
+ 
+NAME                                     CREDIT_LIMIT  
+---------------------------------------- ---------------
+Archer Daniels Midland                    2400.00       
+Marathon Petroleum                        2400.00       
+Freddie Mac                               2400.00       
+PepsiCo                                   2400.00       
+United Technologies                       2400.00       
+Aetna                                     2400.00       
+Lowe?s                                    2400.00       
+UPS                                       2400.00       
+AIG                                       2400.00       
+Prudential Financial                      2400.00       
+Intel                                     2400.00       
+ 
+ 
+NAME                                     CREDIT_LIMIT  
+---------------------------------------- ---------------
+Humana                                    2400.00       
+Disney                                    2400.00       
+Cisco Systems                             2400.00       
+Pfizer                                    2400.00       
+Dow Chemical                              2400.00       
+Sysco                                     2400.00       
+FedEx                                     2400.00       
+Caterpillar                               2500.00       
+Lockheed Martin                           2500.00       
+New York Life Insurance                   2500.00       
+Universal Health Services                 3500.00       
+ 
+ 
+NAME                                     CREDIT_LIMIT  
+---------------------------------------- ---------------
+Coca-Cola                                 3500.00       
+HCA Holdings                              3500.00       
+Ingram Micro                              3600.00       
+Owens & Minor                             3600.00       
+Energy Transfer Equity                    3600.00       
+Tyson Foods                               3600.00       
+American Airlines Group                   3600.00       
+Delta Air Lines                           3600.00       
+Charter Communications                    3600.00       
+Nationwide                                3600.00       
+Johnson Controls                          3600.00       
+ 
+ 
+NAME                                     CREDIT_LIMIT  
+---------------------------------------- ---------------
+Best Buy                                  3700.00       
+Merck                                     3700.00       
+Advance Auto Parts                        3700.00       
+Liberty Mutual Insurance Group            3700.00       
+Goldman Sachs Group                       3700.00       
+Honeywell International                   3700.00       
+MasterCard                                3700.00       
+Massachusetts Mutual Life Insurance       5000.00       
+Oracle                                    5000.00       
+Morgan Stanley                            5000.00       
+Cigna                                     5000.00       
+ 
+ 
+NAME                                     CREDIT_LIMIT  
+---------------------------------------- ---------------
+United Continental Holdings               5000.00       
+Allstate                                  5000.00       
+TIAA                                      5000.00       
+INTL FCStone                              5000.00       
+CHS                                       5000.00       
+American Express                          5000.00       
+Gilead Sciences                           5000.00       
+Publix Super Markets                      1200.00       
+General Dynamics                          1200.00       
+TJX                                       5000.00       
+ConocoPhillips                            2400.00       
+ 
+ 
+NAME                                     CREDIT_LIMIT  
+---------------------------------------- ---------------
+Nike                                      2400.00       
+World Fuel Services                       2400.00       
+3M                                        1200.00       
+Mondelez International                    1200.00       
+Exelon                                     500.00       
+Twenty-First Century Fox                   500.00       
+Deere                                      500.00       
+Applied Materials                          700.00       
+DuPont                                    2400.00       
+Avnet                                      700.00       
+Eastman Chemical                          2400.00       
+ 
+ 
+NAME                                     CREDIT_LIMIT  
+---------------------------------------- ---------------
+Macy?s                                     700.00       
+Enterprise Products Partners              2400.00       
+Travelers Cos.                            3600.00       
+Sonic Automotive                          3600.00       
+Philip Morris International               3600.00       
+Rite Aid                                  3600.00       
+Tech Data                                 3600.00       
+Ally Financial                            3600.00       
+Northwestern Mutual                       3600.00       
+Tesoro                                     500.00       
+Time Warner                               2400.00       
+ 
+ 
+NAME                                     CREDIT_LIMIT  
+---------------------------------------- ---------------
+CST Brands                                3700.00       
+McDonald?s                                3700.00       
+Qualcomm                                   500.00       
+Sears Holdings                             500.00       
+eBay                                      1500.00       
+Capital One Financial                     1500.00       
+EMC                                        700.00       
+USAA                                       700.00       
+Lennar                                     700.00       
+Duke Energy                               5000.00       
+Time Warner Cable                         3700.00       
+ 
+ 
+NAME                                     CREDIT_LIMIT  
+---------------------------------------- ---------------
+Halliburton                               1500.00       
+GameStop                                  5000.00       
+Northrop Grumman                          5000.00       
+Arrow Electronics                         5000.00       
+Reliance Steel & Aluminum                 3700.00       
+Office Depot                              5000.00       
+Nordstrom                                 5000.00       
+Kinder Morgan                             5000.00       
+Aramark                                    300.00       
+DaVita HealthCare Partners                 300.00       
+Molina Healthcare                          300.00       
+ 
+ 
+NAME                                     CREDIT_LIMIT  
+---------------------------------------- ---------------
+WellCare Health Plans                     1200.00       
+CBS                                       1200.00       
+Visa                                      5000.00       
+Lincoln National                          5000.00       
+Ecolab                                    5000.00       
+Kellogg                                   1900.00       
+C.H. Robinson Worldwide                   1900.00       
+Textron                                   2500.00       
+Loews                                     5000.00       
+Illinois Tool Works                        500.00       
+Synnex                                     500.00       
+ 
+ 
+NAME                                     CREDIT_LIMIT  
+---------------------------------------- ---------------
+Hormel Foods                               500.00       
+Viacom                                    3700.00       
+HollyFrontier                             2500.00       
+Land O?Lakes                              1500.00       
+Celgene                                    500.00       
+Devon Energy                              3700.00       
+PBF Energy                                3700.00       
+Genworth Financial                        2400.00       
+Yum Brands                                 500.00       
+Texas Instruments                          500.00       
+CDW                                        500.00       
+ 
+ 
+NAME                                     CREDIT_LIMIT  
+---------------------------------------- ---------------
+PayPal Holdings                           1200.00       
+Waste Management                          2400.00       
+Marsh & McLennan                          2400.00       
+Chesapeake Energy                          700.00       
+Priceline Group                            700.00       
+Parker-Hannifin                            700.00       
+Occidental Petroleum                       700.00       
+Guardian Life Ins. Co. of America          600.00       
+MGM Resorts International                  100.00       
+Farmers Insurance Exchange                 100.00       
+J.C. Penney                                400.00       
+ 
+ 
+NAME                                     CREDIT_LIMIT  
+---------------------------------------- ---------------
+Consolidated Edison                        400.00       
+Autoliv                                    400.00       
+Cognizant Technology Solutions             400.00       
+VF                                        1200.00       
+Ameriprise Financial                       500.00       
+Fidelity National Financial                500.00       
+Computer Sciences                          500.00       
+L Brands                                  2300.00       
+Jacobs Engineering Group                  2300.00       
+Republic Services                         3500.00       
+Principal Financial                       3500.00       
+ 
+ 
+NAME                                     CREDIT_LIMIT  
+---------------------------------------- ---------------
+Ross Stores                               3500.00       
+Bed Bath & Beyond                         3500.00       
+CSX                                       3500.00       
+Toys ?R? Us                               1200.00       
+Las Vegas Sands                           1200.00       
+Leucadia National                         1200.00       
+Dominion Resources                        3500.00       
+United States Steel                       3500.00       
+L-3 Communications                        1400.00       
+Edison International                      1400.00       
+Entergy                                   1400.00       
+ 
+ 
+NAME                                     CREDIT_LIMIT  
+---------------------------------------- ---------------
+ADP                                        700.00       
+First Data                                 700.00       
+BlackRock                                 5000.00       
+WestRock                                  5000.00       
+Voya Financial                            5000.00       
+Sherwin-Williams                          1800.00       
+Hilton Worldwide Holdings                 1800.00       
+Corning                                   2300.00       
+R.R. Donnelley & Sons                     2300.00       
+Stanley Black & Decker                    2300.00       
+Xcel Energy                                400.00       
+ 
+ 
+NAME                                     CREDIT_LIMIT  
+---------------------------------------- ---------------
+Peter Kiewit Sons?                        1400.00       
+Murphy USA                                1400.00       
+CBRE Group                                1200.00       
+Univar                                    5000.00       
+D.R. Horton                               5000.00       
+Estee Lauder                              5000.00       
+Praxair                                    500.00       
+Biogen                                     500.00       
+Mosaic                                    3500.00       
+State Street Corp.                        3500.00       
+Unum Group                                3500.00       
+ 
+ 
+NAME                                     CREDIT_LIMIT  
+---------------------------------------- ---------------
+Reynolds American                         5000.00       
+Core-Mark Holding                         5000.00       
+Group 1 Automotive                        2300.00       
+Henry Schein                              5000.00       
+Hertz Global Holdings                     5000.00       
+Thrivent Financial for Lutherans           900.00       
+Norfolk Southern                           900.00       
+Reinsurance Group of America               900.00       
+Public Service Enterprise Group            600.00       
+Cameron International                      200.00       
+BB&T Corp.                                 200.00       
+ 
+ 
+ 319 rows selected 
+ 
+ 
+select c1.name,c1.credit_limit
+from customers c1
+where credit_limit = 
+  (select round(avg(c2.credit_limit),-2)
+  from customers c2)
+order by c1.customer_id;
+
+Question 3
+1.5
+/
+1.5
+Final Grade: 1.5 points out of 1.5 points possible
+Write a SQL query to display the product ID, product name, and list price of the most expensive product(s) (highest list price) in each category. 
+
+Sort by category ID and the product ID.
+
+This query returns 4 rows as following.
+
+CATEGORY_ID PRODUCT_ID PRODUCT_NAME                        LIST_PRICE
+----------- ---------- ----------------------------------- ----------
+          1        228 Intel Xeon E5-2699 V3 (OEM/Tray)       3410.46
+          2        133 PNY VCQP6000-PB                        5499.99
+          4        190 Supermicro X10SDV-8C-TLN4F              948.99
+          5         50 Intel SSDPECME040T401                  8867.99
+Your Answer
+COLUMN CATEGORY_ID FORMAT A15
+COLUMN PRODUCT_NAME FORMAT A35
+WITH RankedProducts AS (
+  SELECT
+    p.product_id,
+    p.product_name,
+    p.list_price,
+    pc.category_id,
+    RANK() OVER (PARTITION BY pc.category_id ORDER BY p.list_price DESC) AS rank_expensive
+  FROM
+    products p
+    JOIN product_categories pc ON p.category_id = pc.category_id
+)
+SELECT
+  rp.category_id,
+  rp.product_id,
+  rp.product_name,
+  rp.list_price
+FROM
+  RankedProducts rp
+WHERE
+  rp.rank_expensive = 1
+ORDER BY
+  rp.category_id,
+  rp.product_id;
+ 
+ 
+OUTPUT:
+ 
+ 
+    CATEGORY_ID PRODUCT_ID PRODUCT_NAME                        LIST_PRICE
+--------------- ---------- ----------------------------------- ----------
+              1        228 Intel Xeon E5-2699 V3 (OEM/Tray)       3410.46
+              2        133 PNY VCQP6000-PB                        5499.99
+              4        190 Supermicro X10SDV-8C-TLN4F              948.99
+              5         50 Intel SSDPECME040T401                  8867.99
+ 
+ 
+select pp.category_id, pp.product_id, pp.product_name, pp.list_price
+from products pp,
+        (select category_id, max(list_price) list_price
+          from  products 
+      group by  category_id) p
+where pp.category_id = p.category_id
+and pp.list_price = p.list_price
+order by pp.category_id, pp.product_id;
+
+Question 4
+1
+/
+1.5
+Final Grade: 1 point out of 1.5 points possible
+Write a SQL query to display the category ID and the category name of the least expensive (lowest list price) product(s).
+
+
+
+This query returns 1 row as following.
+
+
+
+CATEGORY_ID     CATEGORY_NAME
+----------- -----------------------
+   5	        Storage
+Your Answer
+COLUMN category_name FORMAT A20; --formatting
+ 
+SELECT pc.category_id, pc.category_name /* retrieving data from product_categories*/
+FROM product_categories pc
+WHERE pc.category_id = (
+  SELECT p.category_id
+  FROM products p
+  WHERE p.list_price = (
+    SELECT MIN(list_price)
+    FROM products
+  )
+);
+ 
+OUTPUT:
+ 
+    CATEGORY_ID CATEGORY_NAME      
+--------------- --------------------
+              5 Storage             
+ 
+ 
+select c.category_id, c.category_name
+from products p, product_categories c
+where p.category_id = c.category_id
+and p.list_price = (
+        select min(list_price)
+        from products);
+
+Question 5
+2
+/
+2
+Final Grade: 2 points out of 2 points possible
+Write a SQL query to display product name and list price for products in category 1 which have the list price less than ANY lowest list price in each category. Sort the output by top list prices first and then by the product ID.
+
+
+
+Hint: use the ANY clause
+
+The query returns 16 rows as following.
+
+
+
+PRODUCT_NAME                        LIST_PRICE
+----------------------------------- ----------
+Intel Xeon E5-2687W                     710.99
+Intel Xeon E5-2680 V2                   701.95
+Intel Core i7-980                       699.99
+Intel Core i7-7820X                     678.75
+Intel Core i7-3930K                        660
+Intel Xeon E5-2630 V4                   647.99
+Intel Xeon E5-2630 V3                   629.99
+Intel Core i7-4930K                     624.04
+Intel Core i7-4790K                     620.95
+Intel Xeon E5-2640 V2                   608.95
+Intel Xeon E5-1650 V4                   601.99
+Intel Xeon E5-1650 V4 (OEM/Tray)        594.99
+Intel Xeon E5-2630 V3 (OEM/Tray)        589.99
+Intel Xeon E5-2630 V2                   588.95
+Intel Xeon E5-1650 V3                   564.89
+Intel Core i7-5930K                     554.99
+Your Answer
+SELECT p.product_name, p.list_price
+FROM products p
+WHERE p.category_id = 1  --this condition filters category_id =1 only
+  AND p.list_price < ANY (
+    SELECT MIN(list_price)
+    FROM products
+    GROUP BY category_id
+  )
+ORDER BY p.list_price DESC, p.product_id;
+ 
+OUTPUT:
+PRODUCT_NAME                        LIST_PRICE
+----------------------------------- ----------
+Intel Xeon E5-2687W                     710.99
+Intel Xeon E5-2680 V2                   701.95
+Intel Core i7-980                       699.99
+Intel Core i7-7820X                     678.75
+Intel Core i7-3930K                        660
+Intel Xeon E5-2630 V4                   647.99
+Intel Xeon E5-2630 V3                   629.99
+Intel Core i7-4930K                     624.04
+Intel Core i7-4790K                     620.95
+Intel Xeon E5-2640 V2                   608.95
+Intel Xeon E5-1650 V4                   601.99
+ 
+ 
+PRODUCT_NAME                        LIST_PRICE
+----------------------------------- ----------
+Intel Xeon E5-1650 V4 (OEM/Tray)        594.99
+Intel Xeon E5-2630 V3 (OEM/Tray)        589.99
+Intel Xeon E5-2630 V2                   588.95
+Intel Xeon E5-1650 V3                   564.89
+Intel Core i7-5930K                     554.99
+ 
+ 
+ 16 rows selected 
+ 
+ 
+select product_name, list_price
+from products
+where category_id = 1 
+  and list_price < any (select min(list_price)
+                          from products
+                      group by category_id)
+order by list_price desc, product_id;
+
+Question 6
+2
+/
+2
+Final Grade: 2 points out of 2 points possible
+Find the category or categories contain the highest price product, and display the corresponding category ID along with the least price (list price) in that category .
+
+This query return 1 row as following. 
+
+CATEGORY_ID least price
+----------- -------------
+          5         15.55
+Your Answer
+WITH MaxPriceCategory AS (   -- calculates max list price for each category of product
+  SELECT
+    p.category_id,
+    MAX(p.list_price) AS max_price
+  FROM
+    products p
+  GROUP BY
+    p.category_id
+)
+SELECT
+  mpc.category_id,
+  MIN(p.list_price) AS minimum_price
+FROM
+  MaxPriceCategory mpc
+  JOIN products p ON mpc.category_id = p.category_id
+WHERE
+  mpc.max_price = (SELECT MAX(max_price) FROM MaxPriceCategory)
+GROUP BY
+  mpc.category_id;
+ 
+OUTPUT:
+ 
+    CATEGORY_ID                           MINIMUM_PRICE
+--------------- ---------------------------------------
+              5                                   15.55
+ 
+ 
+
+
+select category_id, min(list_price) as "least price"
+from products
+where category_id in
+      (select category_id
+      from products
+      where list_price = 
+            (select max(list_price)
+            from products));
